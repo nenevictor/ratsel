@@ -3,19 +3,20 @@
 
 #define RATSEL_MAJOR 1
 #define RATSEL_MINOR 0
-#define RATSEL_PATCH 0
+#define RATSEL_PATCH 1
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 
-#include "../vendor/hashmap/hashmap.h"
+#include "hashmap/hashmap.h"
+#include "neda.h"
 
 #define RTSL_UNUSED(_v) (void)(_v);
 #define RTSL_SUCCESS 0
 #define RTSL_FAILURE 1
-#define RTSL_COMMAND_LINE_SIZE 512
+#define RTSL_COMMAND_LINE_MAX 512
 #define RTSL_EXTENSION ".rtsl"
 
 #define CLOG_WARN "[ WARNING ]: "
@@ -32,14 +33,20 @@
 
 typedef int (*RTSLFunction)(void *_app);
 
+typedef char * RTSLString;
+
+typedef struct RTSLBuffer
+{
+    unsigned char *data;
+    size_t size;
+} RTSLBuffer;
+
+NEDA_HEADER(RTSLString);
+
 typedef struct
 {
     struct hashmap *functions;
-    char *command_line;
-
-    char arg0[RTSL_COMMAND_LINE_SIZE];
-    char arg1[RTSL_COMMAND_LINE_SIZE];
-    char arg2[RTSL_COMMAND_LINE_SIZE];
+    neda_RTSLString *args;
 } RTSLApp;
 
 typedef struct
@@ -50,7 +57,7 @@ typedef struct
 
 int RTSLApp__init(RTSLApp *_app);
 int RTSLApp__run(RTSLApp *_app);
-int RTSLApp__close(RTSLApp *_app);
+void RTSLApp__close(RTSLApp *_app);
 
 int RTSLAppFunction__encrypt(void *_app);
 int RTSLAppFunction__decrypt(void *_app);

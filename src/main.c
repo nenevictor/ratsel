@@ -1,4 +1,4 @@
-#include "../src/ratsel.h"
+#include "ratsel.h"
 
 int main()
 {
